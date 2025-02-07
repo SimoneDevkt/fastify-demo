@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,    
+    "target": "esnext",
+    "module": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}
