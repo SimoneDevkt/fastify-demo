@@ -16,6 +16,7 @@ const schema = Type.Object({
   HOSTNAME: Type.String(),
   PORT: Type.Number(),
   DATABASE_URL: Type.String(),
+  JWT_SECRET: Type.String(),
 })
 
 const start = async () => {
