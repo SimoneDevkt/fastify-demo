@@ -1,0 +1,11 @@
+meta {
+  name: healthcheck
+  type: http
+  seq: 10
+}
+
+get {
+  url: localhost/status/health
+  body: none
+  auth: none
+}
