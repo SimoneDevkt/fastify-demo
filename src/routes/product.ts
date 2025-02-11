@@ -1,7 +1,10 @@
-import {type FastifyPluginAsyncTypebox, Type} from '@fastify/type-provider-typebox'
+import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 
 const product: FastifyPluginAsyncTypebox = async function (fastify) {
-  const { prisma, httpErrors } = fastify
+  const { prisma, httpErrors, redis } = fastify
+  
+  const cacheKey = 'products'
+
   const Product = Type.Object({
     id: Type.Number(),
     name: Type.String(),
@@ -16,7 +19,13 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
       }
     }
   }, async (request, reply) => {
+    const cachedProducts = await redis.get(cacheKey)
+    if (cachedProducts) {
+      return JSON.parse(cachedProducts)
+    }
+
     const products = await prisma.product.findMany()
+    await redis.set(cacheKey, JSON.stringify(products), 'EX', 3600) // Cache for 1 hour
     return products
   })
 
@@ -35,6 +44,7 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
     const newProduct = await prisma.product.create({
       data: request.body
     })
+    await redis.del(cacheKey) // Invalidate cache
     reply.code(201)
     return newProduct
   })
@@ -58,6 +68,7 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
       where: { id: request.params.id },
       data: request.body
     })
+    await redis.del(cacheKey) // Invalidate cache
     return updatedProduct
   })
 
@@ -75,9 +86,9 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
     await prisma.product.delete({
       where: { id }
     })
+    await redis.del(cacheKey) // Invalidate cache
     reply.code(204)
   })
-
 }
 
 export default product
