@@ -1,6 +1,4 @@
-
-
-import {type FastifyPluginAsyncTypebox, Type} from '@fastify/type-provider-typebox'
+import {type FastifyPluginAsyncTypebox} from '@fastify/type-provider-typebox'
 
 const privatePage: FastifyPluginAsyncTypebox = async function (fastify) {
   
@@ -12,4 +10,4 @@ const privatePage: FastifyPluginAsyncTypebox = async function (fastify) {
 
 }
 
-export default privatePage;
+export default privatePage

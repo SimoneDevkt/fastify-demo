@@ -1,0 +1,19 @@
+meta {
+  name: create product
+  type: http
+  seq: 5
+}
+
+post {
+  url: localhost/products
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "product 1",
+    "description": "product description",
+    "price": 10
+  }
+}

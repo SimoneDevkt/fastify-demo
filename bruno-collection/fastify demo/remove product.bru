@@ -1,0 +1,19 @@
+meta {
+  name: remove product
+  type: http
+  seq: 7
+}
+
+delete {
+  url: localhost/products/3
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "product 2",
+    "description": "product description",
+    "price": 10
+  }
+}
