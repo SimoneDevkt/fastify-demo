@@ -18,6 +18,12 @@ const options: AppOptions = {
 }
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
+  fastify.addHook('onError', async (request, reply, error) => {
+    // Useful for custom error logging
+    // You should not use this hook to update the error
+  })
+
+
   // This loads all plugins defined in plugins.
   void fastify.register(AutoLoad, {
     dir: join(__dirname, 'plugins'),
