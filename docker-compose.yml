@@ -4,6 +4,8 @@ services:
     restart: always
     ports:
       - '6379:6379'
+    networks:
+      - backend
   postgres:
     image: postgres:latest
     restart: always
@@ -15,5 +17,21 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    networks:
+      - backend
+  fastify:
+    build: .
+    restart: always
+    ports:
+      - '80:80'
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - backend
 volumes:
   postgres:
+
+networks:
+  backend:
+    driver: bridge
