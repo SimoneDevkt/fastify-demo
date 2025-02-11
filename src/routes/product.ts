@@ -4,12 +4,41 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
   const { prisma, httpErrors, redis } = fastify
   
   const cacheKey = 'products'
-
   const Product = Type.Object({
     id: Type.Number(),
     name: Type.String(),
     description: Type.Optional(Type.String()),
     price: Type.Number()
+  })
+
+  
+  fastify.get('/products/:id', {
+    schema: {
+      params: Type.Object({
+        id: Type.Number()
+      }),
+      response: {
+        200: Product
+      }
+    }
+  }, async (request, reply) => {
+    const { id } = request.params
+    const cacheKey = `product:${id}`
+    const cachedProduct = await redis.get(cacheKey)
+    if (cachedProduct) {
+      return JSON.parse(cachedProduct)
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id }
+    })
+
+    if (!product) {
+      throw httpErrors.notFound('Product not found')
+    }
+
+    await redis.set(cacheKey, JSON.stringify(product), 'EX', 3600) // Cache for 1 hour
+    return product
   })
 
   fastify.get('/products', {
@@ -64,10 +93,12 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
       }
     }
   }, async (request, reply) => {
+    const { id } = request.params
     const updatedProduct = await prisma.product.update({
-      where: { id: request.params.id },
+      where: { id },
       data: request.body
     })
+    await redis.del(`product:${id}`) // Invalidate cache for the specific product
     await redis.del(cacheKey) // Invalidate cache
     return updatedProduct
   })
@@ -86,6 +117,7 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
     await prisma.product.delete({
       where: { id }
     })
+    await redis.del(`product:${id}`) // Invalidate cache for the specific product
     await redis.del(cacheKey) // Invalidate cache
     reply.code(204)
   })
