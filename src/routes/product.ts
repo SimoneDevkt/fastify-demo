@@ -18,7 +18,8 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
         id: Type.Number()
       }),
       response: {
-        200: Product
+        200: Product,
+        404: {$ref: 'HttpError'},
       }
     }
   }, async (request, reply) => {
@@ -44,7 +45,7 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
   fastify.get('/products', {
     schema: {
       response: {
-        200: Type.Array(Product)
+        200: Type.Array(Product),
       }
     }
   }, async (request, reply) => {
@@ -66,7 +67,8 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
         price: Type.Number()
       }),
       response: {
-        201: Product
+        201: Product,
+        400: {$ref: 'HttpError'},
       }
     }
   }, async (request, reply) => {
@@ -89,18 +91,21 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
         price: Type.Number()
       }),
       response: {
-        200: Product
+        200: Product,        
+        404: {$ref: 'HttpError'},
       }
     }
   }, async (request, reply) => {
     const { id } = request.params
-    const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: request.body
-    })
-    await redis.del(`product:${id}`) // Invalidate cache for the specific product
-    await redis.del(cacheKey) // Invalidate cache
-    return updatedProduct
+      const updatedProduct = await prisma.product.update({
+        where: { id },
+        data: request.body
+      }).catch((error) => {
+        throw httpErrors.notFound('Product not found')
+      })
+      await redis.del(`product:${id}`) // Invalidate cache for the specific product
+      await redis.del(cacheKey) // Invalidate cache
+      return updatedProduct
   })
 
   fastify.delete('/products/:id', {
@@ -109,13 +114,16 @@ const product: FastifyPluginAsyncTypebox = async function (fastify) {
         id: Type.Number()
       }),
       response: {
-        204: Type.Null()
+        204: Type.Null(),
+        404: {$ref: 'HttpError'},
       }
     }
   }, async (request, reply) => {
     const { id } = request.params
     await prisma.product.delete({
       where: { id }
+    }).catch((error) => {
+      throw httpErrors.notFound('Product not found')
     })
     await redis.del(`product:${id}`) // Invalidate cache for the specific product
     await redis.del(cacheKey) // Invalidate cache
