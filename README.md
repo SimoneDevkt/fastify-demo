@@ -1,31 +1,53 @@
-### Only on windows set script-shell
-`npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
+### Windows Setup
 
-# run local
-create .env file based on .env.template and your postgres and redis instance
+To set the script shell on Windows, run:
+```sh
+npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"
+```
 
-### install dep
-`npm i`
-### generate prisma client
-`npm run client`
-### run server
-`npm run dev`
+### Running Locally
 
-## test api
-open bruno-collection folder with bruno (https://www.usebruno.com/)
+1. Create a `.env` file based on `.env.template` and configure your PostgreSQL and Redis instances.
+
+### Install Dependencies
+
+To install the necessary dependencies, run:
+```sh
+npm install
+```
+
+### Generate Prisma Client
+
+To generate the Prisma client, run:
+```sh
+npm run client
+```
+
+### Start the Server
+
+To start the server in development mode, run:
+```sh
+npm run dev
+```
+
+## Testing the API
+
+Open the `bruno-collection` folder with [Bruno](https://www.usebruno.com/).
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, you can run the following scripts:
 
 ### `npm run dev`
 
-To start the app in dev mode.\
+Starts the app in development mode.\
 Open [http://localhost:80](http://localhost:80) to view it in the browser.
 
 ### `npm start`
-For production mode
+
+Starts the app in production mode.
 
 ### `npm run test`
-Run the test cases.
+
+Runs the test cases.
 
