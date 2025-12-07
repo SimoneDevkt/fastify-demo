@@ -1,13 +1,16 @@
 import {type FastifyInstance} from 'fastify'
 import fp from 'fastify-plugin'
-import {PrismaClient} from '@prisma/client'
+//import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '../../generated/prisma/client.ts'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 export default fp(
   async function (fastify: FastifyInstance): Promise<void> {
-    const {log} = fastify
+    const {log, config} = fastify
+    const adapter = new PrismaPg({ connectionString: config.DATABASE_URL })
     if (!fastify.hasDecorator('prisma')) {
       const prisma = new PrismaClient({
-        datasourceUrl: fastify.config.DATABASE_URL,
+        adapter
       })
       await prisma.$connect()
       log.info('Databases Connected')

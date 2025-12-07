@@ -1,7 +1,8 @@
 import Fastify from 'fastify'
 import {app, options} from '../src/app.ts'
 
-import {PrismaClient} from '@prisma/client'
+import { PrismaClient } from '../generated/prisma/client.ts'
+import { PrismaPg } from '@prisma/adapter-pg'
 import {execSync} from 'child_process'
 
 import { mock } from 'node:test';
@@ -14,7 +15,10 @@ const mockRedis = {
 
 let counter = 0
 
-const prismaInit = new PrismaClient()
+const connectionString = `${process.env.DATABASE_URL}`
+
+const adapter = new PrismaPg({ connectionString })
+const prismaInit = new PrismaClient({ adapter})
 
 export async function getPrisma(preSeed = true) {
   const newDB = `t_${process.pid}_${counter++}`
@@ -31,9 +35,8 @@ export async function getPrisma(preSeed = true) {
     encoding: 'utf8',
   })
 
-  const prisma = new PrismaClient({
-    datasourceUrl: connectionString,
-  })
+  const adapter = new PrismaPg({ connectionString })
+  const prisma = new PrismaClient({ adapter })
 
   const stopPrisma = async () => {
     await prisma.$disconnect()
