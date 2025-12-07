@@ -1,18 +1,18 @@
 meta {
-  name: remove product
+  name: create product
   type: http
-  seq: 7
+  seq: 5
 }
 
-delete {
-  url: localhost/products/3
-  body: none
+post {
+  url: {{host}}/products
+  body: json
   auth: none
 }
 
 body:json {
   {
-    "name": "product 2",
+    "name": "product 1",
     "description": "product description",
     "price": 10
   }
