@@ -39,12 +39,12 @@
     "@fastify/under-pressure": "^9.0.3",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
-    "@sinclair/typebox": "^0.34.16",
     "dotenv": "^17.2.3",
     "fastify": "^5.0.0",
     "fastify-plugin": "^5.0.0",
     "pg": "^8.16.3",
-    "swagger-themes": "^1.4.3"
+    "swagger-themes": "^1.4.3",
+    "typebox": "^1.0.61"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

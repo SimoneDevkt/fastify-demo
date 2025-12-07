@@ -2,7 +2,7 @@ import Fastify from 'fastify'
 import {app, options} from './app.ts'
 
 import fastifyEnv from '@fastify/env'
-import {type Static, Type} from '@sinclair/typebox'
+import {type Static, Type} from 'typebox'
 
 const fastify = Fastify(options)
 
